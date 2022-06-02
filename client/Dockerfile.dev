@@ -1,0 +1,13 @@
+# Start from a base image: Node. We need Node available so that we can run npm commands
+FROM node:16-alpine
+# Create a work directory in the image
+WORKDIR '/app'
+# Copy over the package.json file to download dependencies
+COPY ./package.json ./
+#install dependencies
+RUN npm install
+# move source code
+COPY . .
+# execute command to start a dev server
+CMD ["npm", "start"]
+

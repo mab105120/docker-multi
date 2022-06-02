@@ -1,0 +1,53 @@
+version: '3'
+services:
+  router:
+    depends_on:
+      - app
+      - client
+    restart: always
+    build:
+      context: ./router
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5525:80"
+  postgres:
+    image: 'postgres:latest'
+    environment:
+       - POSTGRES_PASSWORD=postgres_password
+  redis:
+    image: 'redis:latest'
+  app:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes: # allows to mount a local folder to the container's file system
+      - /app/node_modules # don't try to override this folder or redirect access to it.
+      - ./server:/app # any files that are accessed in the /app directory in the container are redirected to the ./server app on the host
+    environment:
+       - REDIS_HOST=redis
+       - REDIS_PORT=6379
+       - PGUSER=postgres
+       - PGPASSWORD=postgres_password
+       - PGHOST=postgres
+       - PGDATABASE=postgres
+       - PGPORT=5432
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    environment:
+      - WDS_SOCKET_PORT=0
+  worker:
+    build: 
+      context: ./worker
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    
