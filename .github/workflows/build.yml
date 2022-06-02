@@ -1,6 +1,6 @@
 name: Docker image build
 
-# When will this workflow execute?
+# When will this workflow execute? 
 # 1. on pushes to any branches (except master because master will be a protected branch)
 # 2. on pull requests from any branch to master
 on:
