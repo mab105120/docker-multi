@@ -1,6 +1,6 @@
 name: Docker image build
 
-# When will this workflow execute?
+# When will this workflow execute? 
 # 1. on pushes to any branches (except master because master will be a protected branch)
 # 2. on pull requests from any branch to master
 on:
@@ -19,7 +19,7 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v3 # check out the code from the branch that executed the build
     - name: Build a test docker image to run the tests
-      run: docker build ./client --file Dockerfile.dev --tag mab105120/client-test
+      run: docker build ./client --file ./client/Dockerfile.dev --tag mab105120/client-test
     - name: Run tests
       run: docker run -e CI=true mab105120/client-test npm test
     - name: Build docker images
