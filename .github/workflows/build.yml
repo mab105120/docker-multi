@@ -32,7 +32,7 @@ jobs:
       env:
         DOCKER_ID: ${{ secrets.DOCKER_ID }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-      uses: actions/login-action@v2 # https://github.com/marketplace/actions/docker-login
+      uses: docker/login-action@v2 # https://github.com/marketplace/actions/docker-login
       with:
         username: $DOCKER_ID
         password: $DOCKER_ACCESS_TOKEN
