@@ -28,11 +28,14 @@ jobs:
         docker build ./server --tag mab105120/multi-server
         docker build ./router --tag mab105120/multi-router
         docker build ./worker --tag mab105120/multi-worker
-    - name: Log in to GitHub
+    - name: Log in to Docker Hub
       env:
         DOCKER_ID: ${{ secrets.DOCKER_ID }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+      uses: actions/login-action@v2 # https://github.com/marketplace/actions/docker-login
+      with:
+        username: $DOCKER_ID
+        password: $DOCKER_ACCESS_TOKEN
     - name: Push images to Docker Hub
       run: |
         docker push mab105120/multi-client
