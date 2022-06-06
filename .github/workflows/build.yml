@@ -1,13 +1,8 @@
 name: Docker image build
 
 # When will this workflow execute? 
-# 1. on pushes to any branches (except master because master will be a protected branch)
-# 2. on pull requests from any branch to master
+# 1. on pull requests from any branch to master
 on:
-  push:
-    branches:
-      - '**' # all branches
-      - '!master' # except master
   pull_request:
     branches:
       - 'master'
