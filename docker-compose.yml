@@ -1,53 +1,33 @@
 version: '3'
 services:
   router:
-    depends_on:
-      - app
-      - client
     restart: always
-    build:
-      context: ./router
-      dockerfile: Dockerfile.dev
+    image: mab105120/multi-router
     ports:
-      - "5525:80"
-  postgres:
-    image: 'postgres:latest'
-    environment:
-       - POSTGRES_PASSWORD=postgres_password
-  redis:
-    image: 'redis:latest'
-  app:
-    build:
-      context: ./server
-      dockerfile: Dockerfile.dev
-    volumes: # allows to mount a local folder to the container's file system
-      - /app/node_modules # don't try to override this folder or redirect access to it.
-      - ./server:/app # any files that are accessed in the /app directory in the container are redirected to the ./server app on the host
-    environment:
-       - REDIS_HOST=redis
-       - REDIS_PORT=6379
-       - PGUSER=postgres
-       - PGPASSWORD=postgres_password
-       - PGHOST=postgres
-       - PGDATABASE=postgres
-       - PGPORT=5432
+      - "80:80"
+    mem_limit: 128m
+    hostname: router
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile.dev
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+    image: mab105120/multi-client
+    mem_limit: 128m
+    hostname: client
+  app:
+    image: mab105120/multi-server
+    mem_limit: 128m
+    hostname: app
     environment:
-      - WDS_SOCKET_PORT=0
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+      - PGHOST=$PGHOST
+      - PGUSER=$PGUSER
+      - PGPASSWORD=$PGPASSWORD
+      - PGDATABASE=$PGDATABASE
+      - PGPORT=$PGPORT
   worker:
-    build: 
-      context: ./worker
-      dockerfile: Dockerfile.dev
-    volumes:
-      - /app/node_modules
-      - ./worker:/app
+    image: mab105120/multi-worker
+    mem_limit: 128m
+    hostname: worker
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
     

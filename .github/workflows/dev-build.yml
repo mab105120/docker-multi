@@ -1,0 +1,17 @@
+name: Docker image build - Dev
+on:
+  push:
+    branches:
+      - '**' # all branches
+      - '!master' # except master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3 # check out the code from the branch that executed the build
+    - name: Build a test docker image to run the tests
+      run: docker build ./client --file ./client/Dockerfile.dev --tag mab105120/client-test
+    - name: Run tests
+      run: docker run -e CI=true mab105120/client-test npm test

@@ -1,13 +1,8 @@
 name: Docker image build
 
 # When will this workflow execute? 
-# 1. on pushes to any branches (except master because master will be a protected branch)
-# 2. on pull requests from any branch to master
+# 1. on pull requests from any branch to master
 on:
-  push:
-    branches:
-      - '**' # all branches
-      - '!master' # except master
   pull_request:
     branches:
       - 'master'
@@ -39,3 +34,15 @@ jobs:
         docker push mab105120/multi-server
         docker push mab105120/multi-router
         docker push mab105120/multi-worker
+    - name: Generate deployment file with docker-composes in content
+      run: zip -r deploy.zip ./docker-compose.yml
+    - name: Deploy docker-compose to EB
+      uses: einaregilsson/beanstalk-deploy@v18
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+        application_name: docker-multi
+        environment_name: Dockermulti-env-1
+        region: us-west-2
+        version_label: ${{ github.sha }}
+        deployment_package: deploy.zip
